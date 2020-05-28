@@ -1,6 +1,6 @@
 import django
 from django.db.models.fields import FieldDoesNotExist
-from django.utils.translation import get_language
+from django.utils.translation import get_language, get_language_info as original_get_language_info
 from hvad.exceptions import WrongManager
 
 __all__ = (
@@ -96,7 +96,7 @@ class SmartGetFieldByName(object):
     """
     def __init__(self, real):
         self.real = real
-    
+
     def __call__(self, meta, name):
         assert not isinstance(self.real, SmartGetFieldByName)
         try:
@@ -149,3 +149,8 @@ def minimumDjangoVersion(*args): #pragma: no cover
     if django.VERSION >= args:
         return lambda x: x
     return lambda x: _MinimumDjangoVersionDescriptor(x.__name__, args)
+
+def get_language_info(lang_code):
+    if lang_code == 'zh':
+        lang_code = 'zh-hans'
+    return original_get_language_info(lang_code)
